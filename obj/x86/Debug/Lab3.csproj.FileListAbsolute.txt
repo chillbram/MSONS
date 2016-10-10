@@ -1,0 +1,5 @@
+C:\Users\Bram\Dropbox\Universiteit 2016-17\Modelleren en systeemontwikkeling\NSTicket\bin\Debug\Lab3.exe
+C:\Users\Bram\Dropbox\Universiteit 2016-17\Modelleren en systeemontwikkeling\NSTicket\bin\Debug\Lab3.pdb
+C:\Users\Bram\Dropbox\Universiteit 2016-17\Modelleren en systeemontwikkeling\NSTicket\obj\x86\Debug\Lab3.csprojResolveAssemblyReference.cache
+C:\Users\Bram\Dropbox\Universiteit 2016-17\Modelleren en systeemontwikkeling\NSTicket\obj\x86\Debug\Lab3.exe
+C:\Users\Bram\Dropbox\Universiteit 2016-17\Modelleren en systeemontwikkeling\NSTicket\obj\x86\Debug\Lab3.pdb
