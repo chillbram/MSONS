@@ -3,14 +3,11 @@ using System.Windows.Forms;
 
 namespace Lab3
 {
-	public interface ICard
+	public interface ICard : PaymentMethod
 	{
-		void Connect();
-		void Disconnect();
-		int BeginTransaction(float amount);
-		bool EndTransaction(int id);
-		void CancelTransaction(int id);
-	}
+        bool EndTransaction(int id);
+        void CancelTransaction(int id);
+    }
 
 	// Mock CreditCard implementation
 	public class CreditCard : ICard
@@ -27,7 +24,9 @@ namespace Lab3
 
 		public int BeginTransaction (float amount)
 		{
-			MessageBox.Show ("Begin transaction 1 of " + amount + " EUR");
+            // Add the CreditCard fee of €0.50 to the total price
+            float totalPrice = amount + 0.5f;
+			MessageBox.Show ("Begin transaction 1 of " + totalPrice + " EUR");
 			return 1;
 		}
 

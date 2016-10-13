@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -17,74 +19,30 @@ namespace Lab3
 		RadioButton fortyDiscount;
 		ComboBox payment;
 		Button pay;
+        GroupBox discountGroup;
+        GroupBox wayGroup;
+        GroupBox classGroup;
 
-		public UI ()
+        public UI ()
 		{
-			initializeControls ();
+            initializeControls ();
 		}
 
-		private void handlePayment(UIInfo info)
-		{
-			// *************************************
-			// This is the code you need to refactor
-			// *************************************
+        private void handlePrice(UIInfo info)
+        {
+            // Handle calculation of the price
+            decimal price = PricingCalculator.calculatePrice(info);
 
-			// Get number of tariefeenheden
-			int tariefeenheden = Tariefeenheden.getTariefeenheden (info.From, info.To);
+            // Handle payment of the user
+            handlePayment(info, (float)price);
+        }
 
-			// Compute the column in the table based on choices
-			int tableColumn;
-			// First based on class
-			switch (info.Class) {
-			case UIClass.FirstClass:
-				tableColumn = 3;
-				break;
-			default:
-				tableColumn = 0;
-				break;
-			}
-			// Then, on the discount
-			switch (info.Discount) {
-			case UIDiscount.TwentyDiscount:
-				tableColumn += 1;
-				break;
-			case UIDiscount.FortyDiscount:
-				tableColumn += 2;
-				break;
-			}
-
-			// Get price
-			float price = PricingTable.getPrice (tariefeenheden, tableColumn);
-			if (info.Way == UIWay.Return) {
-				price *= 2;
-			}
-			// Add 50 cent if paying with credit card
-			if (info.Payment == UIPayment.CreditCard) {
-				price += 0.50f;
-			}
-
-			// Pay
-			switch (info.Payment) {
-			case UIPayment.CreditCard:
-				CreditCard c = new CreditCard ();
-				c.Connect ();
-				int ccid = c.BeginTransaction (price);
-				c.EndTransaction (ccid);
-				break;
-			case UIPayment.DebitCard:
-				DebitCard d = new DebitCard ();
-				d.Connect ();
-				int dcid = d.BeginTransaction (price);
-				d.EndTransaction (dcid);
-				break;
-			case UIPayment.Cash:
-				IKEAMyntAtare2000 coin = new IKEAMyntAtare2000 ();
-				coin.starta ();
-				coin.betala ((int) Math.Round(price * 100));
-				coin.stoppa ();
-				break;
-			}
-		}
+        private void handlePayment(UIInfo info, float price)
+        {
+            info.Payment.Connect();
+            info.Payment.BeginTransaction(price);
+            info.Payment.Disconnect();
+        }
 
 #region Set-up -- don't look at it
 		private void initializeControls()
@@ -118,7 +76,7 @@ namespace Lab3
 			fromLabel.Dock = DockStyle.Fill;
 			fromBox = new ComboBox ();
 			fromBox.DropDownStyle = ComboBoxStyle.DropDownList;
-			fromBox.Items.AddRange (Tariefeenheden.getStations ());
+			fromBox.Items.AddRange (Station.getStationNames());
 			fromBox.SelectedIndex = 0;
 			grid.Controls.Add (fromBox, 1, 0);
 			grid.SetColumnSpan (fromBox, 2);
@@ -130,13 +88,13 @@ namespace Lab3
 			toLabel.Dock = DockStyle.Fill;
 			toBox = new ComboBox ();
 			toBox.DropDownStyle = ComboBoxStyle.DropDownList;
-			toBox.Items.AddRange (Tariefeenheden.getStations ());
+			toBox.Items.AddRange (Station.getStationNames());
 			toBox.SelectedIndex = 0;
 			grid.Controls.Add (toBox, 4, 0);
 			grid.SetColumnSpan (toBox, 2);
 			toBox.Dock = DockStyle.Fill;
 			// Create groups
-			GroupBox classGroup = new GroupBox ();
+			classGroup = new GroupBox ();
 			classGroup.Text = "Class";
 			classGroup.Dock = DockStyle.Fill;
 			grid.Controls.Add (classGroup, 0, 1);
@@ -146,7 +104,7 @@ namespace Lab3
 			classGrid.RowStyles.Add (new RowStyle (SizeType.Percent, 50));
 			classGrid.Dock = DockStyle.Fill;
 			classGroup.Controls.Add (classGrid);
-			GroupBox wayGroup = new GroupBox ();
+			wayGroup = new GroupBox ();
 			wayGroup.Text = "Amount";
 			wayGroup.Dock = DockStyle.Fill;
 			grid.Controls.Add (wayGroup, 2, 1);
@@ -156,7 +114,7 @@ namespace Lab3
 			wayGrid.RowStyles.Add (new RowStyle (SizeType.Percent, 50));
 			wayGrid.Dock = DockStyle.Fill;
 			wayGroup.Controls.Add (wayGrid);
-			GroupBox discountGroup = new GroupBox ();
+			discountGroup = new GroupBox ();
 			discountGroup.Text = "Discount";
 			discountGroup.Dock = DockStyle.Fill;
 			grid.Controls.Add (discountGroup, 4, 1);
@@ -169,14 +127,14 @@ namespace Lab3
 			discountGroup.Controls.Add (discountGrid);
 			// Create radio buttons
 			firstClass = new RadioButton ();
-			firstClass.Text = "1st class";
+			firstClass.Text = "First class";
 			firstClass.Checked = true;
 			classGrid.Controls.Add (firstClass);
 			secondClass = new RadioButton ();
-			secondClass.Text = "2nd class";
+			secondClass.Text = "Second class";
 			classGrid.Controls.Add (secondClass);
 			oneWay = new RadioButton ();
-			oneWay.Text = "One-way";
+			oneWay.Text = "One way";
 			oneWay.Checked = true;
 			wayGrid.Controls.Add (oneWay);
 			returnWay = new RadioButton ();
@@ -212,47 +170,56 @@ namespace Lab3
 			grid.Controls.Add (pay, 0, 3);
 			grid.SetColumnSpan (pay, 6);
 			// Set up event
-			pay.Click += (object sender, EventArgs e) => handlePayment(getUIInfo());
+			pay.Click += (object sender, EventArgs e) => handlePrice(getUIInfo());
 		}
 
 		private UIInfo getUIInfo()
 		{
-			UIClass cls;
-			if (firstClass.Checked)
-				cls = UIClass.FirstClass;
-			else
-				cls = UIClass.SecondClass;
+            Class cls;
+            if (firstClass.Checked)
+            {
+                cls = new FirstClass();
+            }
+            else
+            {
+                cls = new SecondClass();
+            }
 
-			UIWay way;
+			TicketType way;
 			if (oneWay.Checked)
-				way = UIWay.OneWay;
+				way = new OneWay();
 			else
-				way = UIWay.Return;
+				way = new Return();
 
-			UIDiscount dis;
-			if (noDiscount.Checked)
-				dis = UIDiscount.NoDiscount;
-			else if (twentyDiscount.Checked)
-				dis = UIDiscount.TwentyDiscount;
-			else
-				dis = UIDiscount.FortyDiscount;
+			Discount dis;
+			if (twentyDiscount.Checked)
+            {
+                dis = new TwentyDiscount();
+            }				
+			else if (fortyDiscount.Checked)
+            {
+                dis = new FortyDiscount();
+            }
+            else
+            {
+                dis = new NoDiscount();
+            }
 
-			UIPayment pment;
+            PaymentMethod pment;
 			switch ((string)payment.SelectedItem) {
 			case "Credit card":
-				pment = UIPayment.CreditCard;
+				pment = new CreditCard();
 				break;
 			case "Debit card":
-				pment = UIPayment.DebitCard;
+				pment = new DebitCard();
 				break;
 			default:
-				pment = UIPayment.Cash;
+				pment = new CoinMachine();
 				break;
 			}
 
-			return new UIInfo ((string)fromBox.SelectedItem,
-				(string)toBox.SelectedItem,
-				cls, way, dis, pment);
+            var x = discountGroup.Controls.OfType<RadioButton>().FirstOrDefault(n => n.Checked);
+            return new UIInfo(Station.findStation(fromBox.SelectedItem.ToString()), Station.findStation(toBox.SelectedItem.ToString()), cls, way, dis, pment);
 		}
 #endregion
 	}
