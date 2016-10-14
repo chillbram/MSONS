@@ -11,6 +11,8 @@ namespace Lab3
         public abstract int stationID();
         // The name that should be displayed on screen
         public abstract string stationName();
+        // If the station is located internationally
+        public abstract bool isInternational();
         public abstract int distance(int sID);
         public static int getTariefeenheden(Station from, Station to)
         {
@@ -50,7 +52,9 @@ namespace Lab3
         { return 0; }
         public override string stationName()
         { return "Utrecht Centraal"; }
-        
+        public override bool isInternational()
+        { return false; }
+
         public override int distance(int sID)
         {
             List<int> eenheden = new List<int> { 0 };
@@ -65,6 +69,8 @@ namespace Lab3
         { return 1; }
         public override string stationName()
         { return "Gouda"; }
+        public override bool isInternational()
+        { return false; }
 
         public override int distance(int sID)
         {
@@ -80,6 +86,8 @@ namespace Lab3
         { return 2; }
         public override string stationName()
         { return "Geldermalsen"; }
+        public override bool isInternational()
+        { return false; }
 
         public override int distance(int sID)
         {
@@ -95,6 +103,8 @@ namespace Lab3
         { return 3; }
         public override string stationName()
         { return "Hilversum"; }
+        public override bool isInternational()
+        { return false; }
 
         public override int distance(int sID)
         {
@@ -110,6 +120,8 @@ namespace Lab3
         { return 4; }
         public override string stationName()
         { return "Duivendrecht"; }
+        public override bool isInternational()
+        { return false; }
 
         public override int distance(int sID)
         {
@@ -125,6 +137,8 @@ namespace Lab3
         { return 5; }
         public override string stationName()
         { return "Weesp"; }
+        public override bool isInternational()
+        { return false; }
 
         public override int distance(int sID)
         {

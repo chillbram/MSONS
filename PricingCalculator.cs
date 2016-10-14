@@ -25,6 +25,12 @@ namespace Lab3
             // Get price of the travel
             price = price * info.Way.getTicketMultiplier();
 
+            // Add a supplementary charge for international travel
+            if(info.To.isInternational() == true || info.From.isInternational() == true)
+            {
+                price = price + 2;
+            }
+
             // Round the total price, so it will return with 2 digits, and return the output
             price = Math.Round(price, 2);
             return price;

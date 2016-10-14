@@ -30,6 +30,11 @@ namespace Lab3
 
         private void handlePrice(UIInfo info)
         {
+            if(info.To.stationID() == info.From.stationID())
+            {
+                MessageBox.Show("You must choose between two different stations");
+                return;
+            }
             // Handle calculation of the price
             decimal price = PricingCalculator.calculatePrice(info);
 
