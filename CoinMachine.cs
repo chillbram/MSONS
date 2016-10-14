@@ -18,7 +18,8 @@ namespace Lab3
 
         public int BeginTransaction(float amount)
         {
-            int priceInt = (int)Math.Round(amount, 2) * 100;
+            amount = amount * 100;
+            int priceInt = (int)Math.Round(amount);
             machine.betala(priceInt);
             return 1;
         }

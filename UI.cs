@@ -33,7 +33,7 @@ namespace Lab3
             // Handle calculation of the price
             decimal price = PricingCalculator.calculatePrice(info);
 
-            // Handle payment of the user
+            // Handle payment of the ticket
             handlePayment(info, (float)price);
         }
 
@@ -127,12 +127,12 @@ namespace Lab3
 			discountGroup.Controls.Add (discountGrid);
 			// Create radio buttons
 			firstClass = new RadioButton ();
-			firstClass.Text = "First class";
+            firstClass.Text = "First class";
 			firstClass.Checked = true;
 			classGrid.Controls.Add (firstClass);
-			secondClass = new RadioButton ();
-			secondClass.Text = "Second class";
-			classGrid.Controls.Add (secondClass);
+            secondClass = new RadioButton();
+            secondClass.Text = "Second class";
+            classGrid.Controls.Add (secondClass);
 			oneWay = new RadioButton ();
 			oneWay.Text = "One way";
 			oneWay.Checked = true;
@@ -177,13 +177,9 @@ namespace Lab3
 		{
             Class cls;
             if (firstClass.Checked)
-            {
                 cls = new FirstClass();
-            }
             else
-            {
                 cls = new SecondClass();
-            }
 
 			TicketType way;
 			if (oneWay.Checked)
@@ -193,32 +189,20 @@ namespace Lab3
 
 			Discount dis;
 			if (twentyDiscount.Checked)
-            {
-                dis = new TwentyDiscount();
-            }				
+                dis = new TwentyDiscount();				
 			else if (fortyDiscount.Checked)
-            {
                 dis = new FortyDiscount();
-            }
             else
-            {
                 dis = new NoDiscount();
-            }
 
             PaymentMethod pment;
-			switch ((string)payment.SelectedItem) {
-			case "Credit card":
-				pment = new CreditCard();
-				break;
-			case "Debit card":
-				pment = new DebitCard();
-				break;
-			default:
-				pment = new CoinMachine();
-				break;
-			}
-
-            var x = discountGroup.Controls.OfType<RadioButton>().FirstOrDefault(n => n.Checked);
+            if (payment.SelectedIndex == 0)
+                pment = new CreditCard();
+            else if (payment.SelectedIndex == 1)
+                pment = new DebitCard();
+            else 
+                pment = new CoinMachine();
+            
             return new UIInfo(Station.findStation(fromBox.SelectedItem.ToString()), Station.findStation(toBox.SelectedItem.ToString()), cls, way, dis, pment);
 		}
 #endregion

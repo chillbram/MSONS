@@ -2,13 +2,6 @@
 
 namespace Lab3
 {
-	public enum UIPayment
-	{
-		DebitCard,
-		CreditCard,
-		Cash
-	}
-
 	public struct UIInfo
 	{
 		Station from, to;

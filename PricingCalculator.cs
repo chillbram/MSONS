@@ -12,17 +12,22 @@ namespace Lab3
         {
             PricingCalculator pc = new PricingCalculator();
 
-            decimal routePrice = pc.calcTariefeenheden(info) * .02m * info.Class.getClassPrice();
-
+            // Calculate the discount multiplier 
             decimal discountMultiplier = (100 - info.Discount.getDiscountPercentage()) / 100;
-            decimal priceMultipliers = discountMultiplier * info.Way.getTicketMultiplier();
+
+            // Calculate the class price with the discount rounded to ten cents 
+            decimal price = info.Class.getClassPrice() * discountMultiplier;
+            price = Math.Round(price, 1);
+
+            // Multiply with the Route distance (tariefeenheden) with the constant multiplier of 0.02
+            price = pc.calcTariefeenheden(info) * .02m * price;
 
             // Get price of the travel
-            decimal totalPrice = routePrice * priceMultipliers;
+            price = price * info.Way.getTicketMultiplier();
 
-            // Round the total price and return the output
-            totalPrice = Math.Round(totalPrice, 2);
-            return totalPrice;
+            // Round the total price, so it will return with 2 digits, and return the output
+            price = Math.Round(price, 2);
+            return price;
         }
         private int calcTariefeenheden(UIInfo info)
         {

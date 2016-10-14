@@ -7,7 +7,7 @@ namespace Lab3
 {
     public abstract class TicketType
     {
-        public abstract string ticketName();
+        protected abstract string ticketName();
         public virtual string getTicketName()
         { return ticketName(); }
         protected abstract decimal ticketMultiplier();
@@ -19,14 +19,14 @@ namespace Lab3
     
     public class OneWay : TicketType
     {
-        public override string ticketName()
+        protected override string ticketName()
         { return "One way"; }
         protected override decimal ticketMultiplier()
         { return 1; }
     }
     public class Return : TicketType
     {
-        public override string ticketName()
+        protected override string ticketName()
         { return "Return"; }
         protected override decimal ticketMultiplier()
         { return 2; }

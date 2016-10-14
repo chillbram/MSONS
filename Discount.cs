@@ -11,6 +11,7 @@ namespace Lab3
         protected abstract string discountName();
         public virtual string getDiscountName()
         { return discountName(); }
+        // The percentage that needs to be discounted
         protected abstract decimal discountPercentage();
         public virtual decimal getDiscountPercentage()
         { return discountPercentage(); }
